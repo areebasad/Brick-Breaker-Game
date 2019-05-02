@@ -28,11 +28,59 @@ PIXI.Loader.shared.load(setup);
 
 
 
-var state, board, ball, ballRadius = 32;
+var state, board, ball, ballRadius;
+var brickRowCount;
+var brickColumnCount;
+var brickWidth;
+var brickHeight;
+var brickPadding;
+var brickOffsetTop;
+var brickOffsetLeft;
+var bricksGraphics;
+var bricks;
+
+
+
+// function bricksMaker(){
+
+//     for(var c=0; c<brickColumnCount; c++) {
+//         for(var r=0; r<brickRowCount; r++) {
+//           if(bricks[c][r].status == 1) {
+//             var brickX = (r*(brickWidth+brickPadding))+brickOffsetLeft;
+//             var brickY = (c*(brickHeight+brickPadding))+brickOffsetTop;
+//             bricks[c][r].x = brickX;
+//             bricks[c][r].y = brickY;
+//             bricksGraphics = new PIXI.Graphics();
+//             bricksGraphics.beginFill(0x66CCFF);
+//             bricksGraphics.drawRect(brickX,brickY, brickWidth, brickHeight);
+//             bricksGraphics.endFill();
+//             app.stage.addChild(bricksGraphics);
+
+//           }
+//         }
+//     }
+// }
 
 
 function setup() {
  
+     brickRowCount = 7;
+     brickColumnCount = 10;
+     brickWidth = 75;
+     brickHeight = 20;
+     brickPadding = 10;
+     brickOffsetTop = 30;
+     brickOffsetLeft = 30;
+     ballRadius = 32;
+     bricks = [];
+
+    for(var c=0; c<brickColumnCount; c++) {
+        bricks[c] = [];
+        for(var r=0; r<brickRowCount; r++) {
+          bricks[c][r];// = //{ x: 0, y: 0, status: 1 };
+        }
+      }
+
  board = new PIXI.Graphics();
  board.beginFill(0x66CCFF);
  board.lineStyle(4, 0xFF3300, 1);
@@ -55,7 +103,28 @@ function setup() {
  ball.endFill();
  app.stage.addChild(ball);   
 
+ 
+ for(var c=0; c < brickColumnCount; c++) {
+    for(var r=0; r < brickRowCount; r++) {
+     // if(bricks[c][r].status == 1) {
+        bricks[c][r] = new PIXI.Graphics();
+        bricks[c][r].beginFill(0x66CCFF);
+        var brickX = (r*(brickWidth+brickPadding))+brickOffsetLeft;
+        var brickY = (c*(brickHeight+brickPadding))+brickOffsetTop;
+        bricks[c][r].drawRect(0,0, brickWidth, brickHeight);
+        bricks[c][r].x = brickX;
+        bricks[c][r].y = brickY;
+        bricks[c][r].endFill();
+        app.stage.addChild(bricks[c][r]);
+        //bricks[c][r].visible = false;
+        //console.log(bricks[c][r].y)
+      }
+    }
 
+
+   
+
+//bricksMaker();
 
 let left = keyboard(37),
       up = keyboard("ArrowUp"),
@@ -106,6 +175,21 @@ function play(delta) {
     else if (ball.y < ballRadius || ball.y > (app.screen.height - ballRadius)){
         ball.vy = ball.vy * -1;
     }
+
+    for(var c=0; c < brickColumnCount; c++) {
+        for(var r=0; r < brickRowCount; r++) {
+            if ( bricks[c][r].visible == true){
+            if(ball.x + ballRadius > bricks[c][r].x && ball.x + ballRadius < bricks[c][r].x + brickWidth && ball.y + ballRadius > bricks[c][r].y && ball.y + ballRadius < bricks[c][r].y + brickHeight) {
+                ball.vy = ball.vy * -1;
+                bricks[c][r].visible = false;
+            
+            }
+        }
+        }
+    }
+
+
+
 
   }
 
